@@ -143,7 +143,7 @@ maven -Dmaven.repo.remote=file:/usr/share/maven/repository \
       -Dmaven.home.local=$(pwd)/.maven \
       jar javadoc 
 %else
-export CLASSPATH=$(build-classpath ant ant-launcher jta commons-codec):build/classes
+export CLASSPATH=$(build-classpath ant ant-launcher log4j jta commons-codec):build/classes
 %{ant} -Dbuild.sysclasspath=only jar javadocs
 %endif
 
