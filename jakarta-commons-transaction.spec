@@ -62,6 +62,7 @@ Requires:       geronimo-jta-1.0.1B-api
 Requires:       log4j
 Requires:       xerces-j2
 Requires:       xml-commons-apis
+BuildRequires:  java-rpmbuild
 BuildRequires:  jpackage-utils >= 0:1.7
 BuildRequires:  ant >= 0:1.6
 %if %{with_maven}
