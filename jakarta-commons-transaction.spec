@@ -42,7 +42,7 @@
 
 Name:           jakarta-commons-transaction
 Version:        1.1
-Release:        %mkrel 7.0.0
+Release:        %mkrel 7.0.1
 Epoch:          0
 Summary:        Commons Transaction
 License:        Apache License 2.0
@@ -142,7 +142,7 @@ maven -Dmaven.repo.remote=file:/usr/share/maven/repository \
       -Dmaven.home.local=$(pwd)/.maven \
       jar javadoc 
 %else
-export CLASSPATH=$(build-classpath jta commons-codec):build/classes
+export CLASSPATH=$(build-classpath ant-launcher jta commons-codec):build/classes
 %{ant} -Dbuild.sysclasspath=only jar javadocs
 %endif
 
