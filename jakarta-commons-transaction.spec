@@ -42,7 +42,7 @@
 
 Name:           jakarta-commons-transaction
 Version:        1.1
-Release:        %mkrel 7.0.4
+Release:        %mkrel 7.0.5
 Epoch:          0
 Summary:        Commons Transaction
 License:        Apache License 2.0
