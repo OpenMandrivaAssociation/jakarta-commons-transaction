@@ -148,42 +148,42 @@ export CLASSPATH=$(build-classpath ant ant-launcher log4j jta commons-codec):bui
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 # jars
-install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+install -d -m 755 %{buildroot}%{_javadir}
 %if %{with_maven}
 install -m 644 target/commons-transaction-1.1.jar \
-           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+           %{buildroot}%{_javadir}/%{name}-%{version}.jar
 %else
 install -m 644 build/lib/commons-transaction-1.1.jar \
-           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+           %{buildroot}%{_javadir}/%{name}-%{version}.jar
 %endif
 
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in jakarta-*; do \
+(cd %{buildroot}%{_javadir} && for jar in jakarta-*; do \
 ln -sf ${jar} ${jar/jakarta-/}; done)
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do \
+(cd %{buildroot}%{_javadir} && for jar in *-%{version}*; do \
 ln -sf ${jar} ${jar/-%{version}/}; done)
 
 # javadoc
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
 %if %{with_maven}
-cp -pr target/docs/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+cp -pr target/docs/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
 %else
-cp -pr build/doc/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+cp -pr build/doc/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
 %endif
-touch $RPM_BUILD_ROOT%{_javadocdir}/%{name} 
+touch %{buildroot}%{_javadocdir}/%{name} 
 rm -rf target/docs/apidocs
 
 ## manual
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-cp -p LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}
+cp -p LICENSE.txt %{buildroot}%{_docdir}/%{name}-%{version}
 
 %if %{gcj_support}
 %{_bindir}/aot-compile-rpm
 %endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %if %{gcj_support}
 %post
