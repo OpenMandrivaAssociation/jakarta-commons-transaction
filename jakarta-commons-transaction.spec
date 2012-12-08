@@ -42,7 +42,7 @@
 
 Name:           jakarta-commons-transaction
 Version:        1.1
-Release:        %mkrel 7.0.5
+Release:        7.0.6
 Epoch:          0
 Summary:        Commons Transaction
 License:        Apache License 2.0
@@ -54,6 +54,8 @@ Source1:        pom-maven2jpp-depcat.xsl
 Source2:        pom-maven2jpp-newdepmap.xsl
 Source3:        pom-maven2jpp-mapdeps.xsl
 Source4:        commons-transaction-1.1-jpp-depmap.xml
+
+Source10:	%{name}.rpmlintrc
 
 Patch0:         commons-transaction-1.1-project_xml.patch
 
@@ -148,42 +150,42 @@ export CLASSPATH=$(build-classpath ant ant-launcher log4j jta commons-codec):bui
 %endif
 
 %install
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 # jars
-install -d -m 755 %{buildroot}%{_javadir}
+install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
 %if %{with_maven}
 install -m 644 target/commons-transaction-1.1.jar \
-           %{buildroot}%{_javadir}/%{name}-%{version}.jar
+           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 %else
 install -m 644 build/lib/commons-transaction-1.1.jar \
-           %{buildroot}%{_javadir}/%{name}-%{version}.jar
+           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 %endif
 
-(cd %{buildroot}%{_javadir} && for jar in jakarta-*; do \
+(cd $RPM_BUILD_ROOT%{_javadir} && for jar in jakarta-*; do \
 ln -sf ${jar} ${jar/jakarta-/}; done)
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}*; do \
+(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do \
 ln -sf ${jar} ${jar/-%{version}/}; done)
 
 # javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
+install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %if %{with_maven}
-cp -pr target/docs/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
+cp -pr target/docs/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %else
-cp -pr build/doc/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
+cp -pr build/doc/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %endif
-touch %{buildroot}%{_javadocdir}/%{name} 
+touch $RPM_BUILD_ROOT%{_javadocdir}/%{name} 
 rm -rf target/docs/apidocs
 
 ## manual
-install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}
-cp -p LICENSE.txt %{buildroot}%{_docdir}/%{name}-%{version}
+install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+cp -p LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 
 %if %{gcj_support}
 %{_bindir}/aot-compile-rpm
 %endif
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 %if %{gcj_support}
 %post
@@ -208,3 +210,27 @@ rm -rf %{buildroot}
 %defattr(0644,root,root,0755)
 %{_javadocdir}/%{name}-%{version}
 %{_javadocdir}/%{name}
+
+
+%changelog
+* Fri Dec 03 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.1-7.0.4mdv2011.0
++ Revision: 606063
+- rebuild
+
+* Wed Mar 17 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.1-7.0.3mdv2010.1
++ Revision: 523006
+- rebuilt for 2010.1
+
+* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 0:1.1-7.0.2mdv2010.0
++ Revision: 425445
+- rebuild
+
+* Tue Jan 08 2008 Alexander Kurtakov <akurtakov@mandriva.org> 0:1.1-7.0.1mdv2008.1
++ Revision: 146514
+- add log4j to ant classpath
+- add java-rpmbuild BR
+- another fix for ant classpath
+- fix ant classpath
+- import jakarta-commons-transaction
+
+

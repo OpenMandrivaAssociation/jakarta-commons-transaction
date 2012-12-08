@@ -1,0 +1,2 @@
+# We cannot fix debug package auto-description
+addFilter("E: description-line-too-long")
