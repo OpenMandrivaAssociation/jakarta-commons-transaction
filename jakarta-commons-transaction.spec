@@ -32,64 +32,57 @@
 
 # If you don't want to build with maven, and use straight ant instead,
 # give rpmbuild option '--without maven'
-%define _without_maven 1
+%define _without_maven	1
 
 %define with_maven %{!?_without_maven:1}%{?_without_maven:0}
 %define without_maven %{?_without_maven:1}%{!?_without_maven:0}
 
-%define section   free
-%define base_name commons-transaction
+%define section		free
+%define base_name	commons-transaction
 
-Name:           jakarta-commons-transaction
-Version:        1.1
-Release:        7.0.6
-Epoch:          0
-Summary:        Commons Transaction
-License:        Apache License 2.0
-Url:            http://jakarta.apache.org/commons/transaction/
-Group:          Development/Java
-Source0:        commons-transaction-1.1-src.tgz
-
-Source1:        pom-maven2jpp-depcat.xsl
-Source2:        pom-maven2jpp-newdepmap.xsl
-Source3:        pom-maven2jpp-mapdeps.xsl
-Source4:        commons-transaction-1.1-jpp-depmap.xml
-
+Summary:	Commons Transaction
+Name:		jakarta-commons-transaction
+Version:	1.1
+Release:	8
+License:	Apache License 2.0
+Group:		Development/Java
+Url:		http://jakarta.apache.org/commons/transaction/
+Source0:	commons-transaction-1.1-src.tgz
+Source1:	pom-maven2jpp-depcat.xsl
+Source2:	pom-maven2jpp-newdepmap.xsl
+Source3:	pom-maven2jpp-mapdeps.xsl
+Source4:	commons-transaction-1.1-jpp-depmap.xml
 Source10:	%{name}.rpmlintrc
-
-Patch0:         commons-transaction-1.1-project_xml.patch
-
-Requires:       jakarta-commons-codec
-Requires:       geronimo-jta-1.0.1B-api
-Requires:       log4j
-Requires:       xerces-j2
-Requires:       xml-commons-apis
-BuildRequires:  java-rpmbuild
-BuildRequires:  jpackage-utils >= 0:1.7
-BuildRequires:  ant >= 0:1.6
+Patch0:	commons-transaction-1.1-project_xml.patch
+%if !%{gcj_support}
+BuildArch:	noarch
+%else
+BuildRequires:	java-gcj-compat-devel
+%endif
+BuildRequires:	ant >= 0:1.6
+BuildRequires:	geronimo-jta-1.0.1B-api
+BuildRequires:	jakarta-commons-beanutils
+BuildRequires:	jakarta-commons-codec
+BuildRequires:	java-rpmbuild
+BuildRequires:	jpackage-utils >= 0:1.7
+BuildRequires:	junit
+BuildRequires:	log4j
+BuildRequires:	xerces-j2
+BuildRequires:	xml-commons-apis
 %if %{with_maven}
-BuildRequires:  maven >= 0:1.0.2
-BuildRequires:  maven-plugins-base
-BuildRequires:  maven-plugin-test
-BuildRequires:  maven-plugin-xdoc
-BuildRequires:  maven-plugin-license
-BuildRequires:  saxon
-BuildRequires:  saxon-scripts
+BuildRequires:	maven >= 0:1.0.2
+BuildRequires:	maven-plugins-base
+BuildRequires:	maven-plugin-test
+BuildRequires:	maven-plugin-xdoc
+BuildRequires:	maven-plugin-license
+BuildRequires:	saxon
+BuildRequires:	saxon-scripts
 %endif
-BuildRequires:  junit
-BuildRequires:  jakarta-commons-beanutils
-BuildRequires:  jakarta-commons-codec
-BuildRequires:  geronimo-jta-1.0.1B-api
-BuildRequires:  log4j
-BuildRequires:  xerces-j2
-BuildRequires:  xml-commons-apis
-%if ! %{gcj_support}
-BuildArch:      noarch
-%endif
-BuildRoot:      %{_tmppath}/%{name}-%{version}-buildroot
-%if %{gcj_support}
-BuildRequires:          java-gcj-compat-devel
-%endif
+Requires:	jakarta-commons-codec
+Requires:	geronimo-jta-1.0.1B-api
+Requires:	log4j
+Requires:	xerces-j2
+Requires:	xml-commons-apis
 
 %description
 Commons Transaction aims at providing lightweight, 
@@ -103,10 +96,10 @@ obvious. However, the complete component shall remain
 compatible to JDK1.2 and should have minimal dependencies.
 
 %package javadoc
-Summary:        Javadoc for %{name}
-Group:          Development/Java
-Requires(post): /bin/rm /bin/ln
-Requires(postun): /bin/rm
+Summary:	Javadoc for %{name}
+Group:		Development/Java
+Requires(post):	/bin/rm /bin/ln
+Requires(postun):	/bin/rm
 
 %description javadoc
 %{summary}.
@@ -140,52 +133,49 @@ for p in $(find . -name project.xml); do
     popd
 done
 
-maven -Dmaven.repo.remote=file:/usr/share/maven/repository \
-      -Dmaven.javadoc.source=1.4 \
-      -Dmaven.home.local=$(pwd)/.maven \
-      jar javadoc 
+maven \
+	-Dmaven.repo.remote=file:/usr/share/maven/repository \
+	-Dmaven.javadoc.source=1.4 \
+	-Dmaven.home.local=$(pwd)/.maven \
+	jar javadoc 
 %else
 export CLASSPATH=$(build-classpath ant ant-launcher log4j jta commons-codec):build/classes
-%{ant} -Dbuild.sysclasspath=only jar javadocs
+%ant -Dbuild.sysclasspath=only jar javadocs
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
 # jars
-install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+install -d -m 755 %{buildroot}%{_javadir}
 %if %{with_maven}
 install -m 644 target/commons-transaction-1.1.jar \
-           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+           %{buildroot}%{_javadir}/%{name}-%{version}.jar
 %else
 install -m 644 build/lib/commons-transaction-1.1.jar \
-           $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+           %{buildroot}%{_javadir}/%{name}-%{version}.jar
 %endif
 
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in jakarta-*; do \
+(cd %{buildroot}%{_javadir} && for jar in jakarta-*; do \
 ln -sf ${jar} ${jar/jakarta-/}; done)
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do \
+(cd %{buildroot}%{_javadir} && for jar in *-%{version}*; do \
 ln -sf ${jar} ${jar/-%{version}/}; done)
 
 # javadoc
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
 %if %{with_maven}
-cp -pr target/docs/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+cp -pr target/docs/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
 %else
-cp -pr build/doc/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
+cp -pr build/doc/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
 %endif
-touch $RPM_BUILD_ROOT%{_javadocdir}/%{name} 
+touch %{buildroot}%{_javadocdir}/%{name} 
 rm -rf target/docs/apidocs
 
 ## manual
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-cp -p LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}
+cp -p LICENSE.txt %{buildroot}%{_docdir}/%{name}-%{version}
 
 %if %{gcj_support}
 %{_bindir}/aot-compile-rpm
 %endif
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %if %{gcj_support}
 %post
@@ -198,7 +188,6 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %files
-%defattr(0644,root,root,0755)
 %{_docdir}/%{name}-%{version}/LICENSE.txt
 %{_javadir}/*
 %if %{gcj_support}
@@ -207,30 +196,6 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %files javadoc
-%defattr(0644,root,root,0755)
 %{_javadocdir}/%{name}-%{version}
 %{_javadocdir}/%{name}
-
-
-%changelog
-* Fri Dec 03 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.1-7.0.4mdv2011.0
-+ Revision: 606063
-- rebuild
-
-* Wed Mar 17 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.1-7.0.3mdv2010.1
-+ Revision: 523006
-- rebuilt for 2010.1
-
-* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 0:1.1-7.0.2mdv2010.0
-+ Revision: 425445
-- rebuild
-
-* Tue Jan 08 2008 Alexander Kurtakov <akurtakov@mandriva.org> 0:1.1-7.0.1mdv2008.1
-+ Revision: 146514
-- add log4j to ant classpath
-- add java-rpmbuild BR
-- another fix for ant classpath
-- fix ant classpath
-- import jakarta-commons-transaction
-
 
