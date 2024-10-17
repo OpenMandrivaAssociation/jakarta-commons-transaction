@@ -46,7 +46,7 @@ Version:	1.1
 Release:	8
 License:	Apache License 2.0
 Group:		Development/Java
-Url:		http://jakarta.apache.org/commons/transaction/
+Url:		https://jakarta.apache.org/commons/transaction/
 Source0:	commons-transaction-1.1-src.tgz
 Source1:	pom-maven2jpp-depcat.xsl
 Source2:	pom-maven2jpp-newdepmap.xsl
